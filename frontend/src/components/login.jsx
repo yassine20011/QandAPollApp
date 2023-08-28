@@ -1,104 +1,54 @@
-import React, { useState, useEffect } from "react";
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-  },
-  form: {
-    width: "30%",
-    minWidth: "300px",
-    border: "1px solid #eee",
-    padding: "20px",
-    borderRadius: "5px",
-    boxShadow: "0 0 10px #eee",
-    backgroundColor: "#fff",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    marginBottom: "10px",
-    boxSizing: "border-box",
-    border: "1px solid #eee",
-    borderRadius: "5px",
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    boxSizing: "border-box",
-    border: "1px solid #eee",
-    borderRadius: "5px",
-    backgroundColor: "#eee",
-    cursor: "pointer",
-  },
-  errorText: {
-    color: "red",
-    marginBottom: "10px",
-    textAlign: "center",
-  },
-  successText: {
-    color: "green",
-    marginBottom: "10px",
-    textAlign: "center",
-  },
-};
+import React, { useState, useEffect, useContext} from "react";
+import AuthContext from "../context/AuthContext";
 
 export default function Login() {
-  useEffect(() => {
-    document.title = "Login";
-  }, []);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-    const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const res = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-        username,
-        password,
-        }),
-    });
-    const data = await res.json();
-    if (data.error) {
-        setError(data.error);
-        setSuccess("");
-    } else {
-        setError("");
-        setSuccess(data.message);
-    }
-    };
-    
+  let {loginUser} = useContext(AuthContext);
+  
   return (
-    <div style={styles.container}>
-      <form style={styles.form}>
-        <h1 style={{ textAlign: "center" }}>Login</h1>
-        <input
-          style={styles.input}
-          type="text"
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          style={styles.input}
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button style={styles.button} type="submit">
-          Login
-        </button>
-      </form>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-md p-4 bg-white rounded-md shadow-md">
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
+        <form onSubmit={
+          loginUser
+        }
+        >
+
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+          >
+            Log in
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
