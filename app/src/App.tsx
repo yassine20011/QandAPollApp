@@ -1,12 +1,13 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./components/login";
-import NavBar from "./components/navbar";
-import PrivateRoute from "./utils/privateRoute";
-import AuthContextProvider from "./context/AuthProvider";
+import Login from "./components/login.tsx";
+import NavBar from "./components/navbar.tsx";
+import PrivateRoute from "./utils/privateRoute.tsx";
+import RedirectRoute from "./utils/redirectRoute.tsx";
+import AuthContextProvider from "./context/AuthProvider.tsx";
 import { useContext } from "react";
 
-import AuthContext from "./context/AuthContext";
+import AuthContext from "./context/AuthContext.tsx";
 
 const HomePage = () => {
   const { user } = useContext(AuthContext);
@@ -40,11 +41,11 @@ function App() {
         <AuthContextProvider>
           <Routes>
             <Route
-              exact
+              exact={true}
               path="/"
               element={<PrivateRoute component={HomePage} />}
             />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<RedirectRoute component={Login} redirectPath="/" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthContextProvider>

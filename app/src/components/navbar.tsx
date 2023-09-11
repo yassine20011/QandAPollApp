@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 
-export default function NavBar(props) {
-    const { user, logoutUser} = useContext(AuthContext);
+export default function NavBar() {
+    const { user, logoutUser} : any = useContext(AuthContext);
+    
     return (
       <>
       <nav className="bg-blue-500 p-4">
