@@ -1,69 +1,68 @@
-if ($args.Count -eq 0) {
-    Write-Host "Error: No argument provided." -ForegroundColor Red
+$validArguments = @('app', '.\app\', 'backend', '.\backend\', '-m', '-mk', '-c', '-r')
+
+if ($args.Count -eq 0 -or $args[0] -notin $validArguments) {
+    Write-Host "Error: Invalid or no argument provided." -ForegroundColor Red
     Write-Host "Valid arguments are:" -ForegroundColor Yellow
-    Write-Host "  - 'app' for the React app" -ForegroundColor Yellow
-    Write-Host "  - 'backend' for the Django backend" -ForegroundColor Yellow
+    Write-Host "  - 'app' or '.\app\' for the React app" -ForegroundColor Yellow
+    Write-Host "  - 'backend' or '.\backend\' for the Django backend" -ForegroundColor Yellow
+    Write-Host "  - '-m' to run migrations" -ForegroundColor Yellow
+    Write-Host "  - '-mk' to make migrations" -ForegroundColor Yellow
+    Write-Host "  - '-c' to create a superuser" -ForegroundColor Yellow
+    Write-Host "  - '-r' to run the app" -ForegroundColor Yellow
     exit 1
 }
 
 $AppToRun = $args[0]
 
-$rootDir = "C:\Users\AMJAD\Desktop\poll"
-$getCurrentDir = Get-Location
+$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$rootDir = Join-Path $scriptDir 'your_project_root_directory'
 
-# Check if the virtual environment exists
-if (!(Test-Path -Path "$rootDir\env")) {
+if (!(Test-Path -Path (Join-Path $rootDir 'env'))) {
     Write-Host "Error: Virtual environment not found." -ForegroundColor Red
     Write-Host "Attempting to set up the virtual environment..." -ForegroundColor Yellow
 
-    # Set up the virtual environment
-    py -m venv env
+    py -m venv (Join-Path $rootDir 'env')
     if ($?) {
         Write-Host "Virtual environment setup complete." -ForegroundColor Green
-
-        if ($getCurrentDir -eq $rootDir) {
-            .\env\Scripts\Activate
-        } else {
-            Set-Location -Path $rootDir
-            .\env\Scripts\Activate
-        }
+        . (Join-Path $rootDir 'env\Scripts\Activate')
         Write-Host "Environment activated." -ForegroundColor Green
         Write-Host "Installing backend dependencies..." -ForegroundColor Yellow
 
-        # Install backend dependencies
-         pip install -r "$rootDir\backend\requirements.txt"
+        pip install -r (Join-Path $rootDir 'backend\requirements.txt')
         if ($?) {
             Write-Host "Backend dependencies installed." -ForegroundColor Green
-        } else {
+        }
+        else {
             Write-Host "Error: Failed to install backend dependencies." -ForegroundColor Red
             exit 1
         }
-    } else {
+    }
+    else {
         Write-Host "Error: Failed to set up the virtual environment." -ForegroundColor Red
         exit 1
     }
-}else{
-    if ($getCurrentDir -eq $rootDir) {
-        .\env\Scripts\Activate
-    } else {
-        Set-Location -Path $rootDir
-        .\env\Scripts\Activate
-    }
+}
+else {
+    . (Join-Path $rootDir 'env\Scripts\Activate')
 }
 
-
-if ($AppToRun -eq "app") {
-    Set-Location -Path "$rootDir\app"
+if ($AppToRun -eq 'app' -or $AppToRun -eq '.\app\') {
+    Set-Location -Path (Join-Path $rootDir 'app')
     npm run dev
-    exit 0
-} elseif ($AppToRun -eq "backend") {
-    Set-Location -Path "$rootDir\backend"
+}
+elseif ($AppToRun -eq 'backend' -or $AppToRun -eq '.\backend\') {
+    Set-Location -Path (Join-Path $rootDir 'backend')
     py manage.py runserver
-    exit 0
-} else {
-    Write-Host "Error: Invalid argument." -ForegroundColor Red
-    Write-Host "Valid arguments are:" -ForegroundColor Yellow
-    Write-Host "  - 'app' for the React app" -ForegroundColor Yellow
-    Write-Host "  - 'backend' for the Django backend" -ForegroundColor Yellow
-    exit 1
+}
+elseif ($AppToRun -eq '-m') {
+    py (Join-Path $rootDir 'backend\manage.py') migrate
+}
+elseif ($AppToRun -eq '-mk') {
+    py (Join-Path $rootDir 'backend\manage.py') makemigrations
+}
+elseif ($AppToRun -eq '-c') {
+    py (Join-Path $rootDir 'backend\manage.py') createsuperuser
+}
+elseif ($AppToRun -eq '-r') {
+    py (Join-Path $rootDir 'backend\manage.py') runserver
 }

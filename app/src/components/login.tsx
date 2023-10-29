@@ -4,7 +4,7 @@ import AuthContext from "../context/AuthContext";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 export default function Login() {
-  let { loginUser } : any = useContext(AuthContext);
+  let { loginUser }: any = useContext(AuthContext);
 
   const initialValues = {
     username: "",
@@ -77,5 +77,6 @@ export default function Login() {
         </Formik>
       </div>
     </div>
+      
   );
 }
