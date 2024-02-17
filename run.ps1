@@ -15,7 +15,7 @@ if ($args.Count -eq 0 -or $args[0] -notin $validArguments) {
 $AppToRun = $args[0]
 
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$rootDir = Join-Path $scriptDir 'your_project_root_directory'
+$rootDir = Join-Path $scriptDir .
 
 if (!(Test-Path -Path (Join-Path $rootDir 'env'))) {
     Write-Host "Error: Virtual environment not found." -ForegroundColor Red
